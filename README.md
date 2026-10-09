@@ -95,7 +95,13 @@ sql-troubleshooting/
 - Financial values are stored in **minor currency units** (`amount_cents`); avoid summing unlike currencies.
 - Timestamps here are illustrative strings. Production systems need explicit time-zone handling.
 - Query syntax targets **SQLite**; PostgreSQL, MySQL and SQL Server may require changes.
+## Featured Incident RCA Case Study
 
+Explore a fictional P1 payment-processing incident investigation, including SQL analysis, transaction event correlation, root cause hypotheses, recovery verification, and preventive actions.
+
+**[Read the Sample P1 Payment Incident RCA Report](docs/SAMPLE_PAYMENT_INCIDENT_RCA.md)**
+
+> This case study uses synthetic data and does not represent a real customer or employer incident.
 ## System Architecture
 
 ```mermaid
