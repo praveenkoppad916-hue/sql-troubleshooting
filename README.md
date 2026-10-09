@@ -96,7 +96,16 @@ sql-troubleshooting/
 - Timestamps here are illustrative strings. Production systems need explicit time-zone handling.
 - Query syntax targets **SQLite**; PostgreSQL, MySQL and SQL Server may require changes.
 
-## Author
-**Praveen Koppad** · [Professional portfolio](https://praveenkoppad916-hue.github.io/) · [GitHub](https://github.com/praveenkoppad916-hue)
+## System Architecture
 
-**Suggested next steps:** Expand this lab with idempotency, refund ledgers, reconciliation reports, and a synthetic REST API.
+```mermaid
+flowchart TD
+    A["Synthetic Payment & Incident Data"] --> B["SQLite Database"]
+    B --> C["SQL Investigation Queries"]
+    C --> D["Python Automated Tests"]
+    D --> E["GitHub Actions CI"]
+    E --> F["Test Results & CI Status Badge"]
+
+    C --> G["Incident Investigation Documentation"]
+    G --> H["RCA & Troubleshooting Runbooks"]
+```
