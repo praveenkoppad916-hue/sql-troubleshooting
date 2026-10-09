@@ -8,6 +8,18 @@ A hands-on learning and demonstration repository by **Praveen Koppad**, Technica
 
 > **Scope:** This is an independent educational lab. It does not contain employer source code, customer records, proprietary system diagrams or claims about specific real-world incidents.
 
+## Version 2.0: five hands-on investigation scenarios
+
+The repository now includes [five documented scenarios](docs/ADVANCED_SCENARIOS.md) with executable SQL, synthetic incident tickets, SLA policies and automated checks:
+
+1. Failed payment investigation and event correlation
+2. Suspected duplicate transaction detection
+3. P1/P2 incident timeline and RCA triage
+4. Query-plan inspection and indexing
+5. First-response SLA breach analysis
+
+**Quick start:** `python scripts/run_demo.py` then `python -m unittest discover -s tests -v`.
+
 ## What you can explore
 | Area | Techniques | Example question |
 |---|---|---|
@@ -52,17 +64,26 @@ sql-troubleshooting/
 ├── README.md
 ├── schema/
 │   ├── 01_schema.sql
-│   └── 02_seed.sql
+│   ├── 02_seed.sql
+│   ├── 03_support_cases.sql
+│   └── 04_support_seed.sql
 ├── queries/
 │   ├── 01_foundations.sql
 │   ├── 02_incident_investigations.sql
-│   └── 03_performance.sql
+│   ├── 03_performance.sql
+│   ├── 04_failed_payment_investigation.sql
+│   ├── 05_duplicate_detection.sql
+│   ├── 06_p1_p2_incident_analysis.sql
+│   ├── 07_query_optimization.sql
+│   └── 08_sla_breach_analysis.sql
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── INCIDENT_RUNBOOK.md
-│   └── LEARNING_PATH.md
+│   ├── LEARNING_PATH.md
+│   └── ADVANCED_SCENARIOS.md
 ├── scripts/run_demo.py
 ├── tests/test_queries.py
+├── tests/test_advanced_scenarios.py
 ├── .gitignore
 └── LICENSE
 ```

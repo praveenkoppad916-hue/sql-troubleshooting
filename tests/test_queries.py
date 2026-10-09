@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class PaymentLabTests(unittest.TestCase):
     def setUp(self):
         self.db=sqlite3.connect(':memory:')
-        for f in ('schema/01_schema.sql','schema/02_seed.sql'):
+        for f in ('schema/01_schema.sql','schema/02_seed.sql','schema/03_support_cases.sql','schema/04_support_seed.sql'):
             self.db.executescript((ROOT/f).read_text(encoding='utf-8'))
     def tearDown(self): self.db.close()
     def test_seed_count(self):

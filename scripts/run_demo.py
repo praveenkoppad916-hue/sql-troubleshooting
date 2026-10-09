@@ -3,7 +3,7 @@ from pathlib import Path
 import sqlite3
 ROOT = Path(__file__).resolve().parents[1]
 conn = sqlite3.connect(':memory:')
-for file in ('schema/01_schema.sql','schema/02_seed.sql'):
+for file in ('schema/01_schema.sql','schema/02_seed.sql','schema/03_support_cases.sql','schema/04_support_seed.sql'):
     conn.executescript((ROOT/file).read_text(encoding='utf-8'))
 for file in sorted((ROOT/'queries').glob('*.sql')):
     print(f'\n=== {file.name} ===')
