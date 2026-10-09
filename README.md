@@ -1,4 +1,5 @@
 # SQL Troubleshooting Knowledge Base
+[![SQL Troubleshooting CI](https://github.com/praveenkoppad916-hue/sql-troubleshooting/actions/workflows/sql-tests.yml/badge.svg)](https://github.com/praveenkoppad916-hue/sql-troubleshooting/actions/workflows/sql-tests.yml)
 
 **Practical SQL investigations for payment operations, application support and production incident response.**
 
