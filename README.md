@@ -1,68 +1,80 @@
+# SQL Troubleshooting Knowledge Base
 
-# SQL Troubleshooting & Production Support
+**Practical SQL investigations for payment operations, application support and production incident response.**
 
-## Overview
+![SQLite](https://img.shields.io/badge/SQL-SQLite-0b7285) ![Focus](https://img.shields.io/badge/Focus-Production%20Support-24486c) ![Data](https://img.shields.io/badge/Data-100%25%20Synthetic-26734d)
 
-A hands-on SQL portfolio demonstrating database troubleshooting, data validation, and incident investigation techniques relevant to L2/L3 Production Support Engineering.
+A hands-on learning and demonstration repository by **Praveen Koppad**, Technical Support & Implementation Engineer. Explore realistic, **fictional** payment records to investigate failed transactions, pending payments, suspected duplicates and performance concerns using reproducible SQL.
 
-This project uses PostgreSQL and fictional banking transaction scenarios to demonstrate practical SQL troubleshooting skills.
+> **Scope:** This is an independent educational lab. It does not contain employer source code, customer records, proprietary system diagrams or claims about specific real-world incidents.
 
-## Technologies & Skills
+## What you can explore
+| Area | Techniques | Example question |
+|---|---|---|
+| Payment failures | JOIN, WHERE, GROUP BY | Which failure codes recur? |
+| Possible duplicates | Composite grouping, HAVING | Which order references appear more than once? |
+| Stale pending payments | Timestamp arithmetic | Which payments have remained pending beyond a threshold? |
+| Event correlation | LEFT JOIN, ORDER BY | What happened before a payment timeout? |
+| Merchant health | Conditional aggregation | Which merchants show elevated failure rates in the sample? |
+| Query tuning | Indexes, EXPLAIN QUERY PLAN | Is the database using an appropriate index? |
 
-- SQL and PostgreSQL
-- Database Troubleshooting
-- L2/L3 Production Support
-- Transaction Monitoring and Analysis
-- Root Cause Analysis (RCA)
-- Data Validation and Incident Investigation
-
-## Project Objectives
-
-- Investigate failed transactions using SQL queries.
-- Identify duplicate records and missing data.
-- Analyse transaction failures and error patterns.
-- Practise SQL JOINs, GROUP BY, HAVING, and subqueries.
-- Develop structured troubleshooting approaches.
-
-## Planned Project Structure
-
-- `database/` — Sample database schemas and fictional data
-- `queries/` — SQL troubleshooting examples
-- `incidents/` — Simulated production incident investigations
-- `docs/` — Troubleshooting guides and explanations
-
-## Example: Identifying Failed Transactions
-
-```sql
-SELECT
-    transaction_id,
-    customer_id,
-    amount,
-    status,
-    created_at
-FROM transactions
-WHERE status = 'FAILED'
-ORDER BY created_at DESC;
+## Architecture at a glance
+```mermaid
+flowchart LR
+  A[Merchant] --> B[Payment service]
+  B --> C[(Payments)]
+  B --> D[(Incident events)]
+  C --> E[SQL diagnostics]
+  D --> E
+  E --> F[Incident triage and RCA]
 ```
 
-### Explanation
+For the full conceptual architecture and data model, see [Architecture](docs/ARCHITECTURE.md).
 
-This query retrieves failed transactions and sorts them by the most recent transaction time. It can help support engineers identify transaction-processing failures and investigate incident patterns.
+## Run locally (Python 3; no extra packages)
+From the repository root:
 
-The query requires a `transactions` table with the columns shown above. A fictional sample database will be added to make the example executable.
+```bash
+python scripts/run_demo.py
+```
 
-## Data Privacy & Security
+The script creates an **in-memory SQLite database**, loads the schema and fictional data, and executes the example query files. It does not connect to a live database.
 
-All examples use fictional data and simulated scenarios. No confidential production data, customer records, credentials, or proprietary employer information is included.
+Run verification tests:
 
-## Future Enhancements
+```bash
+python -m unittest discover -s tests -v
+```
 
-- Advanced SQL troubleshooting queries
-- Transaction failure analysis
-- Database performance investigation
-- Sample RCA documentation
-- Automated data validation scripts
+## Repository map
+```text
+sql-troubleshooting/
+├── README.md
+├── schema/
+│   ├── 01_schema.sql
+│   └── 02_seed.sql
+├── queries/
+│   ├── 01_foundations.sql
+│   ├── 02_incident_investigations.sql
+│   └── 03_performance.sql
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── INCIDENT_RUNBOOK.md
+│   └── LEARNING_PATH.md
+├── scripts/run_demo.py
+├── tests/test_queries.py
+├── .gitignore
+└── LICENSE
+```
 
-## Project Purpose
+## Investigation notes
+- Duplicate external references are **candidates for review**, not proof of double settlement.
+- A gateway timeout does **not** establish whether funds moved.
+- Financial values are stored in **minor currency units** (`amount_cents`); avoid summing unlike currencies.
+- Timestamps here are illustrative strings. Production systems need explicit time-zone handling.
+- Query syntax targets **SQLite**; PostgreSQL, MySQL and SQL Server may require changes.
 
-This repository is being developed as a practical technical portfolio showcasing SQL troubleshooting, database investigation, and production support engineering skills.
+## Author
+**Praveen Koppad** · [Professional portfolio](https://praveenkoppad916-hue.github.io/) · [GitHub](https://github.com/praveenkoppad916-hue)
+
+**Suggested next steps:** Expand this lab with idempotency, refund ledgers, reconciliation reports, and a synthetic REST API.

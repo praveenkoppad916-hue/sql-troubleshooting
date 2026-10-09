@@ -1,0 +1,11 @@
+PRAGMA foreign_keys = ON;
+DROP TABLE IF EXISTS incident_events;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS merchants;
+CREATE TABLE merchants (merchant_id INTEGER PRIMARY KEY, merchant_name TEXT NOT NULL, region TEXT NOT NULL);
+CREATE TABLE payments (payment_id INTEGER PRIMARY KEY, merchant_id INTEGER NOT NULL REFERENCES merchants(merchant_id), external_reference TEXT NOT NULL, amount_cents INTEGER NOT NULL CHECK(amount_cents>0), currency TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('SUCCESS','FAILED','PENDING','REFUNDED')), failure_code TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE TABLE incident_events (event_id INTEGER PRIMARY KEY, payment_id INTEGER NOT NULL REFERENCES payments(payment_id), event_type TEXT NOT NULL, details TEXT, event_at TEXT NOT NULL);
+CREATE INDEX idx_payments_status_created ON payments(status, created_at);
+CREATE INDEX idx_payments_merchant_created ON payments(merchant_id, created_at);
+CREATE INDEX idx_payments_external_reference ON payments(external_reference);
+CREATE INDEX idx_events_payment_time ON incident_events(payment_id,event_at);
