@@ -31,3 +31,25 @@ python -m unittest discover -s tests -v
 - SLA targets and support cases are invented; a real SLA may use business hours and exclusions.
 - Times are fixed text timestamps to make the lab deterministic; production systems require time-zone-aware timestamps.
 - Small synthetic tables do not establish real performance gains; EXPLAIN is a learning aid, not a benchmark.
+
+## Failed Payment Investigation Workflow
+
+```mermaid
+flowchart TD
+    A["Payment Failure Reported"] --> B["Capture Transaction ID and Timestamp"]
+    B --> C["Query Payment Records in SQLite"]
+    C --> D{"Transaction Found?"}
+    D -->|No| E["Check Reference, Time Window and Data Availability"]
+    D -->|Yes| F["Inspect Payment Status and Error Details"]
+    F --> G["Correlate Related Payment Events"]
+    G --> H{"Likely Failure Category?"}
+    H -->|Validation| I["Review Request Data and Validation Rules"]
+    H -->|Timeout| J["Review Timing and Retry Events"]
+    H -->|Other| K["Inspect Available Error Evidence"]
+    E --> L["Document Findings and Escalate if Needed"]
+    I --> L
+    J --> L
+    K --> L
+    L --> M["Record RCA Hypothesis and Recommended Next Steps"]
+```
+  
