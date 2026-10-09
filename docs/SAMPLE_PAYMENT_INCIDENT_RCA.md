@@ -51,84 +51,63 @@ These are investigation hypotheses, **not confirmed root causes**.
 
 ## 3. SQL Investigation
 
-The examples below use illustrative SQLite table and column names. Adapt them to the schema in this repository before execution. Do not assume that every query will run unchanged against the existing demonstration database.
+The following SQLite queries use the table and column names defined in `schema/01_schema.sql`. Transaction IDs and investigation timestamps are illustrative and should be adjusted to match the synthetic seed data when running the examples.
 
 ### Query A — Identify unsuccessful payments
-
 ```sql
-SELECT
-    transaction_id,
-    status,
-    amount_cents,
-    created_at
+SELECT payment_id, external_reference, status, failure_code,
+       amount_cents, currency, created_at
 FROM payments
 WHERE status IN ('FAILED', 'PENDING')
   AND created_at >= '2026-10-01 10:00:00'
   AND created_at < '2026-10-01 10:45:00'
 ORDER BY created_at DESC;
 ```
-
 **Investigation purpose:** Identify affected transactions and separate confirmed failures from transactions still awaiting a final state.
 
 ### Query B — Count payments by status
-
 ```sql
-SELECT
-    status,
-    COUNT(*) AS transaction_count
+SELECT status, COUNT(*) AS transaction_count
 FROM payments
 WHERE created_at >= '2026-10-01 10:00:00'
   AND created_at < '2026-10-01 10:45:00'
 GROUP BY status
 ORDER BY transaction_count DESC;
 ```
-
 **Investigation purpose:** Understand the status distribution during the simulated incident window. Counts must be interpreted against an appropriate baseline before concluding that an outage occurred.
 
 ### Query C — Review payment event history
-
 ```sql
-SELECT
-    transaction_id,
-    event_type,
-    event_time,
-    error_code
-FROM payment_events
-WHERE transaction_id = 'DEMO-TXN-1001'
-ORDER BY event_time ASC;
+SELECT p.payment_id, p.external_reference, p.status,
+       p.failure_code, e.event_type, e.details, e.event_at
+FROM payments AS p
+JOIN incident_events AS e ON p.payment_id = e.payment_id
+WHERE p.payment_id = 1001
+ORDER BY e.event_at ASC;
 ```
-
 **Investigation purpose:** Reconstruct the event sequence for one fictional transaction.
 
 ### Query D — Identify repeated payment references
-
 ```sql
-SELECT
-    external_reference,
-    COUNT(*) AS occurrence_count
+SELECT external_reference, COUNT(*) AS occurrence_count
 FROM payments
-WHERE external_reference IS NOT NULL
 GROUP BY external_reference
 HAVING COUNT(*) > 1
 ORDER BY occurrence_count DESC;
 ```
-
 **Investigation purpose:** Flag repeated references for review. Repeated references alone do **not** prove duplicate settlement or financial loss.
 
 ### Query E — Investigate error frequency
-
 ```sql
-SELECT
-    error_code,
-    COUNT(*) AS event_count
-FROM payment_events
-WHERE event_time >= '2026-10-01 10:00:00'
-  AND event_time < '2026-10-01 10:45:00'
-  AND error_code IS NOT NULL
-GROUP BY error_code
-ORDER BY event_count DESC;
+SELECT failure_code, COUNT(*) AS failure_count
+FROM payments
+WHERE status = 'FAILED'
+  AND created_at >= '2026-10-01 10:00:00'
+  AND created_at < '2026-10-01 10:45:00'
+  AND failure_code IS NOT NULL
+GROUP BY failure_code
+ORDER BY failure_count DESC;
 ```
-
 **Investigation purpose:** Identify recurring error categories and prioritize deeper investigation.
 
 ## 4. Illustrative Investigation Timeline
