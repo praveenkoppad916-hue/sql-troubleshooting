@@ -9,9 +9,9 @@
 | Incident ID | DEMO-INC-P1-001 |
 | Severity | P1 — Critical (illustrative classification) |
 | Service | Synthetic Payment Processing Service |
-| Incident date | 2026-10-01 (fictional) |
-| Detection time | 10:05 UTC |
-| Investigation window | 10:00–10:45 UTC |
+| Incident date | 2026-01-10 |
+| Detection time | 09:05 UTC |
+| Investigation window | 09:00–09:45 UTC |
 | Customer impact | Simulated failed or delayed payment processing |
 | Incident status | Closed — simulated case study |
 | Prepared by | Praveen Koppad |
@@ -59,8 +59,8 @@ SELECT payment_id, external_reference, status, failure_code,
        amount_cents, currency, created_at
 FROM payments
 WHERE status IN ('FAILED', 'PENDING')
-  AND created_at >= '2026-10-01 10:00:00'
-  AND created_at < '2026-10-01 10:45:00'
+  AND created_at >= '2026-01-10 09:00:00'
+AND created_at < '2026-01-10 09:45:00'
 ORDER BY created_at DESC;
 ```
 **Investigation purpose:** Identify affected transactions and separate confirmed failures from transactions still awaiting a final state.
@@ -69,8 +69,8 @@ ORDER BY created_at DESC;
 ```sql
 SELECT status, COUNT(*) AS transaction_count
 FROM payments
-WHERE created_at >= '2026-10-01 10:00:00'
-  AND created_at < '2026-10-01 10:45:00'
+WHERE created_at >= '2026-01-10 09:00:00'
+AND created_at < '2026-01-10 09:45:00'
 GROUP BY status
 ORDER BY transaction_count DESC;
 ```
@@ -82,7 +82,7 @@ SELECT p.payment_id, p.external_reference, p.status,
        p.failure_code, e.event_type, e.details, e.event_at
 FROM payments AS p
 JOIN incident_events AS e ON p.payment_id = e.payment_id
-WHERE p.payment_id = 1001
+WHERE p.payment_id = 1002
 ORDER BY e.event_at ASC;
 ```
 **Investigation purpose:** Reconstruct the event sequence for one fictional transaction.
@@ -102,28 +102,49 @@ ORDER BY occurrence_count DESC;
 SELECT failure_code, COUNT(*) AS failure_count
 FROM payments
 WHERE status = 'FAILED'
-  AND created_at >= '2026-10-01 10:00:00'
-  AND created_at < '2026-10-01 10:45:00'
+  AND created_at >= '2026-01-10 09:00:00'
+AND created_at < '2026-01-10 09:45:00'
   AND failure_code IS NOT NULL
 GROUP BY failure_code
 ORDER BY failure_count DESC;
 ```
 **Investigation purpose:** Identify recurring error categories and prioritize deeper investigation.
+### Query F — Validate payment status distribution
+
+```sql
+SELECT status, COUNT(*) AS payment_count
+FROM payments
+WHERE created_at >= '2026-01-10 09:00:00'
+  AND created_at < '2026-01-10 09:45:00'
+GROUP BY status
+ORDER BY payment_count DESC;
+```
+
+**Expected results (synthetic data):**
+
+| Status | Payment count |
+|---|---:|
+| SUCCESS | 4 |
+| FAILED | 3 |
+| PENDING | 2 |
+| REFUNDED | 1 |
+
+**Investigation purpose:** Verify that the SQL results match the expected payment status distribution in the synthetic dataset.
 
 ## 4. Illustrative Investigation Timeline
 
 | Time (UTC) | Activity |
 |---|---|
-| 10:05 | Fictional monitoring alert received |
-| 10:08 | Incident severity and investigation scope recorded |
-| 10:12 | Payment statuses and transaction references reviewed |
-| 10:18 | Event history and error categories examined |
-| 10:25 | Potential timeout-related pattern identified |
-| 10:30 | Findings escalated for downstream service verification |
-| 10:40 | Recovery checks proposed |
-| 10:45 | Investigation summary documented |
+| 09:05 | Fictional monitoring alert received |
+| 09:08 | Incident severity and investigation scope recorded |
+| 09:12 | Payment statuses and transaction references reviewed |
+| 09:18 | Event history and error categories examined |
+| 09:25 | Potential timeout-related pattern identified |
+| 09:30 | Findings escalated for downstream service verification |
+| 09:40 | Recovery checks proposed |
+| 09:45 | Investigation summary documented |
 
-**Note:** These times are invented for the demonstration.
+**Note:** These are illustrative support investigation milestones, not actual payment event timestamps.
 
 ## 5. Findings and Root Cause Assessment
 
